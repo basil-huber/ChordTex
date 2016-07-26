@@ -1,7 +1,5 @@
 #!/usr/bin/env python3
 import urllib.request
-import lxml.html
-from lxml import etree
 
 class UltimateGuitarParser:
     LYRICS_START_STRING = '<pre class="js-tab-content"><i></i>'
@@ -43,15 +41,14 @@ class UltimateGuitarParser:
             i_start_old = i_start
 
         line_out += line[i_start_old:len(line)]
-        print('lineout: ' + line_out)
         return line_out
 
 
     def find_chords(self, lyrics):
-        print('find_chords: ')
         string_out = ''
         chord_list_old = []
         line_old = ''
+        lyrics += '\n\n'  # add empty line at the end to make sure that last line is treated
         for line in lyrics.splitlines():
             chord_list = self.find_chords_in_line(line)
 
@@ -68,16 +65,17 @@ class UltimateGuitarParser:
             line_old = line
             chord_list_old = chord_list
 
+
         return string_out
 
 
     def parse(self,html):
         lyrics = self.get_lyrics(html.decode('utf8'))
         string_out = self.find_chords(lyrics)
-        print(string_out)
+        return string_out
 
 
-    def _substring_find(self,string, start_string, stop_string, i_start0=0):
+    def _substring_find(self, string, start_string, stop_string, i_start0=0):
         i_start0 = string.find(start_string, i_start0) 
         if i_start0 < 0:
             return ('', -1, -1)
@@ -92,24 +90,6 @@ class UltimateGuitarParser:
             return ('', -1, -1)
 
 
-class UltimateGuitarParser_lxml:
-    def find_chords(lyrics):
-        chords = lyrics.xpath('span')
-        return [c.xpath('string()') for c in chords]
-
-
-    def get_lyrics(html):
-        tree = lxml.etree.HTML(html)
-        # find lyrics part of page
-        lyrics_list = tree.xpath('//pre[contains(@class, "js-tab-content")]')
-        if not lyrics_list:
-            print('Error: no lyrics found on this site')
-            return None
-        else:
-            return lyrics_list[0]
-
-
-# print('starting')
 
 parser = UltimateGuitarParser()
 
@@ -117,7 +97,6 @@ parser = UltimateGuitarParser()
 with urllib.request.urlopen('https://tabs.ultimate-guitar.com/a/annenmaykantereit/es_geht_mir_gut_crd.htm') as response:
     html = response.read()
     response.close()
-    # html = 'Not here<pre class="js-tab-content"><i></i>blablabla</pre>'
-    parser.parse(html)
 
-print('ending')
+    string_out = parser.parse(html)
+    print(string_out)
