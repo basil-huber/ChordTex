@@ -9,7 +9,6 @@ class UltimateGuitarParser:
     CHORD_START_LATEX = '\chord{'
     CHORD_END_LATEX = '}'
 
-
     def get_lyrics(self,html):
         lyrics, i_start, i_end = self._substring_find(html, self.LYRICS_START_STRING, self.LYRICS_END_STRING)
         return lyrics
@@ -69,8 +68,18 @@ class UltimateGuitarParser:
         return string_out
 
 
-    def parse(self,html):
-        lyrics = self.get_lyrics(html.decode('utf8'))
+    def parse(self, URL):
+        try:
+            response = urllib.request.urlopen(URL)
+            html = response.read()
+            response.close()
+        except:
+            print('could not read html')
+            return ''
+        return self.parse_string(html.decode('utf8'))
+
+    def parse_string(self, string):
+        lyrics = self.get_lyrics(string)
         string_out = self.find_chords(lyrics)
         return string_out
 
@@ -90,13 +99,7 @@ class UltimateGuitarParser:
             return ('', -1, -1)
 
 
-
 parser = UltimateGuitarParser()
 
-# get HTML of URL
-with urllib.request.urlopen('https://tabs.ultimate-guitar.com/a/annenmaykantereit/es_geht_mir_gut_crd.htm') as response:
-    html = response.read()
-    response.close()
-
-    string_out = parser.parse(html)
-    print(string_out)
+string_out = parser.parse('https://tabs.ultimate-guitar.com/a/annenmaykantereit/es_geht_mir_gut_crd.htm')
+print(string_out)
