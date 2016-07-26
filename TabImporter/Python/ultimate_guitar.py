@@ -55,8 +55,9 @@ class UltimateGuitarParser:
                 if not chord_list:
                     # if there are no chords in this line and there are chords in the line above, insert them
                     string_out += self.insert_chords_in_line(line, line_old, chord_list_old) + '\n'
-                # else:
-                    # if there are also chords in this line, insert chords in the line above
+                else:
+                    # if there are also chords in this line, insert chords into empty line
+                    string_out += self.insert_chords_in_line('', line_old, chord_list_old) + '\n'
             else:
                 #if there are no chords in line above, write it to output
                 string_out += line_old + '\n'
