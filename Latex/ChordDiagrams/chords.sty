@@ -25,13 +25,13 @@
   % A single note
   % \single <string> <fret> <finger>
   \newcommand{\single}[3]{
-    \draw node[single] at (##2,##1) {##3};%%
+    \draw node[single] at (##2,7-##1) {##3};%%
   }
 
   % A bar
   % \bar <startstring> <fret> <finger>
   \renewcommand{\bar}[3]{
-    \draw[bar] (##2,##1) -- node[midway] {##3} (##2,6);%%
+    \draw[bar] (##2,7-##1) -- node[midway] {##3} (##2,6);%%
   }
   % No strike
   % \nostrike <string>
