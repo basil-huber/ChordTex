@@ -1,0 +1,30 @@
+\documentclass{article}
+
+\usepackage{chords}
+
+\begin{document}
+
+\begin{figure}
+\subfloat[F major]{
+\begin{chord}
+  \bar 1 1 1    % bar from 6th string down with index finger on 1st fret
+  \single 5 3 r % ringfinger on 5th string 3rd fret
+  \single 4 3 4 % middle finger on 3rd string 2nd fret
+  \single 3 2 2 % pinky on 4th string 3rd fret
+\end{chord}
+\chordreset}
+%
+\subfloat[G major]{
+\def\chordfretstart{4} % start diagram at 5th fret
+\def\chordfretend{5}   % end diagram at 8th fret
+\begin{chord}
+  %\bar 2 5 1
+  \single 2 4 2
+  \single 1 5 3
+  \single 6 5 4
+  %\nostrike 1 % do not strike 6th string
+\end{chord}
+\chordreset}
+\end{figure}
+
+\end{document}
