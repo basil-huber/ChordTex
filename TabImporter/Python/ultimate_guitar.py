@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 import urllib.request
+from sys import exit, argv
 
 class UltimateGuitarParser:
-    LYRICS_START_STRING = '<pre class="js-tab-content"><i></i>'
+    LYRICS_START_STRING = '<pre class="js-tab-content">'
     LYRICS_END_STRING = '</pre>'
     CHORD_START_STRING = '<span>'
     CHORD_END_STRING = '</span>'
@@ -102,5 +103,13 @@ class UltimateGuitarParser:
 
 parser = UltimateGuitarParser()
 
-string_out = parser.parse('https://tabs.ultimate-guitar.com/a/annenmaykantereit/es_geht_mir_gut_crd.htm')
+# Get URL from command line arguments
+if len(argv) < 2 :
+    print("Error: No URL provided")
+    exit()
+
+url = argv[1];
+
+#print("parsing: " + url)
+string_out = parser.parse(url)
 print(string_out)
