@@ -1,5 +1,5 @@
 %\NeedsTeXFormat{LaTeX2e}[1994/06/01]
-\ProvidesPackage{chords}[2016/11/13 Guitar Chords]
+\ProvidesPackage{chord_digram}[2016/11/13 Guitar Chords]
 
 \RequirePackage{subfig, tikz, ifthen}
 
@@ -17,10 +17,10 @@
 }
 \chordreset
 
-% The chord environmant
-% \begin{chord}
-% \begin{chord}[D,G,D,G,H,E]
-\newenvironment{chord}
+% The chord_diagram environmant
+% \begin{chord_diag}
+% \begin{chord_diag}[D,G,D,G,H,E]
+\newenvironment{chord_diag}
 {
   % A single note
   % \single <string> <fret> <finger>

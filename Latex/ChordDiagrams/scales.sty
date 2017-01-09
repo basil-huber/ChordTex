@@ -1,10 +1,10 @@
 \ProvidesPackage{scales}[2016/11/13 Guitar Scales]
-\RequirePackage{chords, xfrac}
+\RequirePackage{chord_diagram, xfrac}
 
 \newcommand{\majorScalePatternOne}{
 	\def\chordfretstart{1} % start diagram at 1th fret
 	\def\chordfretend{4}   % end diagram at 4th fret
-	\begin{chord}
+	\begin{chord_diag}
 	  \single 6 1 1
 	  \tonic  6 2 2
 	  \single 6 4 4
@@ -22,14 +22,14 @@
 	  \single 1 1 1
 	  \tonic  1 2 2
 	  \single 1 4 4
-	\end{chord}
+	\end{chord_diag}
 	\chordreset
 }
 
 \newcommand{\majorScalePatternTwo}{
 	\def\chordfretstart{3} % start diagram at 3th fret
 	\def\chordfretend{7}   % end diagram at 7th fret
-	\begin{chord}
+	\begin{chord_diag}
 	  \single 6 4 1
 	  \single  6 6 3
 	  \single 6 7 4
@@ -47,14 +47,14 @@
 	  \single 1 4 1
 	  \single 1 6 2
 	  \single 1 7 4
-	\end{chord}
+	\end{chord_diag}
 	\chordreset
 }
 
 \newcommand{\majorScalePatternThree}{
 	\def\chordfretstart{6} % start diagram at 6th fret
 	\def\chordfretend{9}   % end diagram at 9th fret
-	\begin{chord}
+	\begin{chord_diag}
 	  \single 6 6 1
 	  \single 6 7 2
 	  \single 6 9 4
@@ -72,14 +72,14 @@
 	  \single 1 6 1
 	  \single 1 7 2
 	  \single 1 9 4
-	\end{chord}
+	\end{chord_diag}
 	\chordreset
 }
 
 \newcommand{\majorScalePatternFour}{
 	\def\chordfretstart{7} % start diagram at 7th fret
 	\def\chordfretend{12}   % end diagram at 12th fret
-	\begin{chord}
+	\begin{chord_diag}
 	  \single 6 7  1
 	  \single 6 9  2
 	  \single 6 {11} 4
@@ -97,14 +97,14 @@
 	  \single 2 {12} 4
 	  \single 1 9  1
 	  \single 1 {11} 3
-	\end{chord}
+	\end{chord_diag}
 	\chordreset
 }
 
 \newcommand{\majorScalePatternFive}{
 	\def\chordfretstart{10} % start diagram at 7th fret
 	\def\chordfretend{14}   % end diagram at 12th fret
-	\begin{chord}
+	\begin{chord_diag}
 	  \single 6 {11}  1
 	  \single 6 {13}  3
 	  \tonic  6 {14}  4
@@ -122,6 +122,6 @@
 	  \single 1 {11}  1
 	  \single 1 {13}  3
 	  \tonic 1  {14}  4
-	\end{chord}
+	\end{chord_diag}
 	\chordreset
 }
