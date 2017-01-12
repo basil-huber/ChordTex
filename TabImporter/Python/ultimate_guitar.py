@@ -9,6 +9,8 @@ class UltimateGuitarParser:
     CHORD_END_STRING = '</span>'
     CHORD_START_LATEX = '\chord{'
     CHORD_END_LATEX = '}'
+    PREAMBLE_LATEX = '\documentclass[a4paper, twocolumn]{article}\n \\usepackage{../Latex/Lyrics/lyrics}\n \\begin{document}\n'
+    POSTAMBLE_LATEX = '\end{document}'
 
     def get_lyrics(self,html):
         lyrics, i_start, i_end = self._substring_find(html, self.LYRICS_START_STRING, self.LYRICS_END_STRING)
@@ -55,13 +57,21 @@ class UltimateGuitarParser:
             if chord_list_old:
                 if not chord_list:
                     # if there are no chords in this line and there are chords in the line above, insert them
-                    string_out += self.insert_chords_in_line(line, line_old, chord_list_old) + '\n'
+                    line_new = self.insert_chords_in_line(line, line_old, chord_list_old)
                 else:
                     # if there are also chords in this line, insert chords into empty line
-                    string_out += self.insert_chords_in_line('', line_old, chord_list_old) + '\n'
+                    line_new = self.insert_chords_in_line('', line_old, chord_list_old)
             else:
-                #if there are no chords in line above, write it to output
-                string_out += line_old + '\n'
+                if not chord_list:
+                    line_new = line #if there are no chords in line above, write it to output
+                else:
+                    line_new = None
+
+            if line_new is not None:
+                if len(line_new) > 0:
+                    line_new += '\\\\'
+
+                string_out += line_new + '\n' #add latex and file new line
 
             line_old = line
             chord_list_old = chord_list
@@ -78,7 +88,7 @@ class UltimateGuitarParser:
         except:
             print('could not read html')
             return ''
-        return self.parse_string(html.decode('utf8'))
+        return self.PREAMBLE_LATEX + self.parse_string(html.decode('utf8')) + self.POSTAMBLE_LATEX
 
     def parse_string(self, string):
         lyrics = self.get_lyrics(string)
