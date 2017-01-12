@@ -1,4 +1,10 @@
 \ProvidesPackage{lyrics}[2016/11/13 Lyrics with chords]
 
 \RequirePackage{mathtools}
+
+\usepackage[cm]{fullpage}
+\usepackage[utf8]{inputenc}
+
 \newcommand{\chord}[1]{$\overset{\textsl{\small\makebox[0pt][l]{#1}}}{\vphantom{I}}$}
+
+\newcommand{\songpart}[1]{\vspace{-2ex}\subsubsection*{[#1]}}
