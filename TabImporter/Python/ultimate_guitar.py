@@ -69,7 +69,7 @@ class UltimateGuitarParser:
 
             if line_new is not None:
                 if len(line_new) > 0:
-                    line_new += '\\\\'
+                    line_new += ' \\\\'
 
                 string_out += line_new + '\n' #add latex and file new line
 
