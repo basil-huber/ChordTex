@@ -1,10 +1,46 @@
 \ProvidesPackage{lyrics}[2016/11/13 Lyrics with chords]
 
 \RequirePackage{mathtools}
+\RequirePackage{zref-savepos}
 
 \usepackage[cm]{fullpage}
 \usepackage[utf8]{inputenc}
 
-\newcommand{\chord}[1]{$\overset{\textsl{\small\makebox[0pt][l]{#1}}}{\vphantom{I}}$}
+\newdimen\spaceX
+\newdimen\spaceY
+\newdimen\currentX
+\newdimen\currentY
+\newdimen\lastX
+\newdimen\lastY
+
+\newcommand{\mysavepos}{
+	\zsavepos{lastpos}
+	saved last pos
+}
+\newcommand{\myshowpos}{
+	\lastX=\zposx{lastpos}sp\relax
+	\strip@pt\lastX
+}
+
+%\newcommand\chord[2][l]{%
+%  \makebox[0pt][#1]{\begin{tabular}[b]{@{}l@{}}#2\\\mbox{}\end{tabular}}}
+
+\makeatletter
+\newcommand{\chordspace}[1]{
+	\zsavepos{currentpos}
+	\currentX=\zposx{currentpos}sp\relax
+	\lastX=\zposx{lastpos}sp\relax
+	\spaceX=\dimexpr\zposx{currentpos}sp-\zposx{lastpos}sp
+	\spaceY=\zposy{currentpos}sp\relax% - \zposy{lastpos}
+	\strip@pt\currentX:\strip@pt\lastX:
+	\strip@pt\spaceX:\strip@pt\spaceY
+}
+\makeatother
+\newcommand{\chordbox}[1]{\textsl{\small\makebox[0pt][l]{\zsaveposx{lastpos}{#1}}}}
+
+
+% \ifnum<5 , hallo \fi}
+
+\newcommand{\chord}[1]{$\overset{\chordbox{#1}}{\vphantom{I}}$}
 
 \newcommand{\songpart}[1]{\vspace{-2ex}\subsubsection*{[#1]}}

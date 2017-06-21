@@ -1,0 +1,3 @@
+[submodule "Latex/leadsheets"]
+	path = Latex/leadsheets
+	url = git@github.com:cgnieder/leadsheets.git
