@@ -1,23 +1,38 @@
 #!/usr/bin/env python3
+from leadsheets_writer import LeadsheetsWriter
 import urllib.request
 from sys import exit, argv
 
 class UltimateGuitarParser:
-    LYRICS_START_STRING = '<pre class="js-tab-content">'
+    LYRICS_START_STRING = '<pre class="js-tab-content'
     LYRICS_END_STRING = '</pre>'
     CHORD_START_STRING = '<span>'
     CHORD_END_STRING = '</span>'
-    CHORD_START_LATEX = '\chord{'
-    CHORD_END_LATEX = '}'
-    PREAMBLE_LATEX = '\n\input{../Latex/preamble.tex} \n \\begin{document}\n\n \\begin{song}{title={%s}, interpret={%s}}\n\n'
-    POSTAMBLE_LATEX = '\end{song} \n \end{document}'
 
-    def __init__(self):
-        self.interpret = 'Interpret'
-        self.title = 'Title'
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exc_type, exc_value, traceback):
+        self.writer.__exit__()
+
+    def __call__(self, URL, output_filename):    
+        try:
+            response = urllib.request.urlopen(URL)
+            html = response.read()
+            response.close()
+        except:
+            print('could not read html')
+            return ''
+
+        # self.get_lyrics(html)
+
+        with LeadsheetsWriter(output_filename, "title", "artist") as writer:
+            self.parse_string(html.decode('utf8'), writer)
+
 
     def get_lyrics(self,html):
-        lyrics, i_start, i_end = self._substring_find(html, self.LYRICS_START_STRING, self.LYRICS_END_STRING)
+        lyrics, i_start, i_end = self._substring_find(html, self.LYRICS_START_STRING, self.LYRICS_END_STRING, HTML_TAG = True)
         return lyrics
 
 
@@ -50,62 +65,39 @@ class UltimateGuitarParser:
         return line_out
 
 
-    def find_chords(self, lyrics):
-        string_out = ''
+    def find_chords(self, lyrics, writer):
         chord_list_old = []
         line_old = ''
         lyrics += '\n\n'  # add empty line at the end to make sure that last line is treated
         for line in lyrics.splitlines():
             chord_list = self.find_chords_in_line(line)
 
-            if chord_list_old:
-                if not chord_list:
-                    # if there are no chords in this line and there are chords in the line above, insert them
-                    line_new = self.insert_chords_in_line(line, line_old, chord_list_old)
-                else:
-                    # if there are also chords in this line, insert chords into empty line
-                    line_new = self.insert_chords_in_line('', line_old, chord_list_old)
+            if not chord_list:
+                # if there are no chords in this line, write line
+                writer.write_line(line, chord_list_old)
             else:
-                if not chord_list:
-                    line_new = line #if there are no chords in line above, write it to output
-                else:
-                    line_new = None
-
-            if line_new is not None:
-                if len(line_new) > 0:
-                    line_new += ' \\\\'
-
-                string_out += line_new + '\n' #add latex and file new line
+                # if there are also chords in this line, insert chords into empty line
+                writer.write_line('', chord_list_old)
 
             line_old = line
             chord_list_old = chord_list
 
-
-        return string_out
-
-
-    def parse(self, URL):
-        try:
-            response = urllib.request.urlopen(URL)
-            html = response.read()
-            response.close()
-        except:
-            print('could not read html')
-            return ''
-        return (self.PREAMBLE_LATEX % (self.title, self.interpret)) + self.parse_string(html.decode('utf8')) + self.POSTAMBLE_LATEX
-
-    def parse_string(self, string):
+    def parse_string(self, string, writer):
         lyrics = self.get_lyrics(string)
-        string_out = self.find_chords(lyrics)
+        string_out = self.find_chords(lyrics, writer)
         return string_out
 
 
-    def _substring_find(self, string, start_string, stop_string, i_start0=0):
+    def _substring_find(self, string, start_string, stop_string, i_start0=0, HTML_TAG = False):
         i_start0 = string.find(start_string, i_start0) 
         if i_start0 < 0:
             return ('', -1, -1)
 
         i_start = i_start0 + len(start_string)
+
+        #if HTML_TAG is true, find the end of the tag
+        if HTML_TAG:
+            i_start = string.find(">", i_start-1)+1
 
         i_end = string.find(stop_string, i_start);
         
@@ -118,12 +110,10 @@ class UltimateGuitarParser:
 parser = UltimateGuitarParser()
 
 # Get URL from command line arguments
-if len(argv) < 2 :
-    print("Error: No URL provided")
+if len(argv) < 3 :
+    print("Error: Missing argument")
     exit()
 
 url = argv[1];
-
-#print("parsing: " + url)
-string_out = parser.parse(url)
-print(string_out)
+filename = argv[2]
+parser(url,filename)
