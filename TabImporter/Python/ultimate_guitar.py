@@ -9,8 +9,12 @@ class UltimateGuitarParser:
     CHORD_END_STRING = '</span>'
     CHORD_START_LATEX = '\chord{'
     CHORD_END_LATEX = '}'
-    PREAMBLE_LATEX = '\documentclass[a4paper, twocolumn]{article}\n \\usepackage{../Latex/Lyrics/lyrics}\n \\begin{document}\n'
-    POSTAMBLE_LATEX = '\end{document}'
+    PREAMBLE_LATEX = '\n\input{../Latex/preamble.tex} \n \\begin{document}\n\n \\begin{song}{title={%s}, interpret={%s}}\n\n'
+    POSTAMBLE_LATEX = '\end{song} \n \end{document}'
+
+    def __init__(self):
+        self.interpret = 'Interpret'
+        self.title = 'Title'
 
     def get_lyrics(self,html):
         lyrics, i_start, i_end = self._substring_find(html, self.LYRICS_START_STRING, self.LYRICS_END_STRING)
@@ -88,7 +92,7 @@ class UltimateGuitarParser:
         except:
             print('could not read html')
             return ''
-        return self.PREAMBLE_LATEX + self.parse_string(html.decode('utf8')) + self.POSTAMBLE_LATEX
+        return (self.PREAMBLE_LATEX % (self.title, self.interpret)) + self.parse_string(html.decode('utf8')) + self.POSTAMBLE_LATEX
 
     def parse_string(self, string):
         lyrics = self.get_lyrics(string)

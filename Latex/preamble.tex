@@ -1,0 +1,32 @@
+\documentclass[4paper,8pt,twocolumn]{article}
+\usepackage[cm]{fullpage}
+\usepackage[english]{babel}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+
+%\usepackage{Lyrics/lyrics}
+
+ \usepackage{leadsheets/leadsheets}
+\setleadsheets{align-chords=l,
+ 			   obey-lines=true,
+ 			   verse/numbered,
+ 			   verse/template=flushleft,
+ 			   chorus/template=flushleft,
+ 			   bridge/template=flushleft,
+ 			   intro/template=flushleft,
+ 			   outro/template=flushleft,
+ 			   verse/named=true}
+\setchords{format = \sl}
+
+
+\defineversetypetemplate{flushleft}
+{%
+	\vspace{10pt}
+	\textbf{\verselabel}\space
+	\vspace{5pt}
+	\linespread{0.4} \selectfont
+}
+{\endflushleft}
+
+
+
