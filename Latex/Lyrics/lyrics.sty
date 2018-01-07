@@ -29,11 +29,13 @@
 \newcommand{\chordspace}[1]{
 	\zsavepos{currentpos}
 	\currentX=\zposx{currentpos}sp\relax
+	\currentX
 	\lastX=\zposx{lastpos}sp\relax
-	\spaceX=\dimexpr\zposx{currentpos}sp-\zposx{lastpos}sp
-	\spaceY=\zposy{currentpos}sp\relax% - \zposy{lastpos}
-	\strip@pt\currentX:\strip@pt\lastX:
-	\strip@pt\spaceX:\strip@pt\spaceY
+	%\lastX
+	%\spaceX=\dimexpr\zposx{currentpos}sp-\zposx{lastpos}sp
+	%\spaceY=\zposy{currentpos}sp\relax% - \zposy{lastpos}
+	%\strip@pt\currentX:\strip@pt\lastX:
+	%\strip@pt\spaceX:\strip@pt\spaceY
 }
 \makeatother
 \newcommand{\chordbox}[1]{\textsl{\small\makebox[0pt][l]{\zsaveposx{lastpos}{#1}}}}
