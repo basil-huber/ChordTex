@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-from leadsheets_writer import LeadsheetsWriter
 import urllib.request
 from sys import exit, argv
 
@@ -9,12 +7,15 @@ class UltimateGuitarParser:
     CHORD_START_STRING = '<span>'
     CHORD_END_STRING = '</span>'
 
+    def __init__(self):
+        self.writer = None
 
     def __enter__(self):
         return self
 
     def __exit__(self, exc_type, exc_value, traceback):
-        self.writer.__exit__()
+        if self.writer:
+            self.writer.__exit__()
 
     def __call__(self, URL, output_filename):    
         try:
@@ -107,13 +108,4 @@ class UltimateGuitarParser:
             return ('', -1, -1)
 
 
-parser = UltimateGuitarParser()
 
-# Get URL from command line arguments
-if len(argv) < 3 :
-    print("Error: Missing argument")
-    exit()
-
-url = argv[1];
-filename = argv[2]
-parser(url,filename)
