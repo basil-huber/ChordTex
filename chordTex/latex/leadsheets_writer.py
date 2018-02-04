@@ -1,13 +1,15 @@
-
+from pkg_resources import resource_filename
 
 
 class LeadsheetsWriter:
-    PREAMBLE_LATEX = '\n\input{../Latex/preamble.tex}\n\\begin{document}\n\n\\begin{song}{title={%s}, interpret={%s}}\n\n'
+    PREAMBLE_LATEX = '\n\input{%s}\n' % (resource_filename(__name__,"templates/preamble.tex"))
+    HEADER_LATEX = '\\begin{document}\n\n\\begin{song}{title={%s}, interpret={%s}}\n\n'
     POSTAMBLE_LATEX = '\end{song}\n\end{document}'
 
     def __init__(self, file_name, title, interpret):
         self.file = open(file_name, 'w')
-        self.file.write(self.PREAMBLE_LATEX % (title, interpret))
+        self.file.write(self.PREAMBLE_LATEX)
+        self.file.write(self.HEADER_LATEX % (title, interpret))
 
     def __enter__(self):
         return self

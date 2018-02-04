@@ -10,5 +10,5 @@ def chord_import():
 	argparser.add_argument('filename')
 	args = argparser.parse_args()
 
-	with UltimateGuitarParser() as parser:
+	with UltimateGuitarParser(LeadsheetsWriter) as parser:
 		parser(args.url, args.filename)

@@ -1,0 +1,4 @@
+include chordTex/latex/templates/preamble.tex
+include chordTex/latex/templates/leadsheets/*.tex
+include chordTex/latex/templates/leadsheets/*.sty
+include chordTex/latex/templates/leadsheets/*.cls

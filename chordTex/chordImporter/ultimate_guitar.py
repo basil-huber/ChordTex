@@ -7,15 +7,15 @@ class UltimateGuitarParser:
     CHORD_START_STRING = '<span>'
     CHORD_END_STRING = '</span>'
 
-    def __init__(self):
-        self.writer = None
+    def __init__(self, writer_class):
+        self.writer_class = writer_class
+        
 
     def __enter__(self):
         return self
 
     def __exit__(self, exc_type, exc_value, traceback):
-        if self.writer:
-            self.writer.__exit__()
+        pass
 
     def __call__(self, URL, output_filename):    
         try:
@@ -25,10 +25,7 @@ class UltimateGuitarParser:
         except:
             print('could not read html')
             return ''
-
-        # self.get_lyrics(html)
-
-        with LeadsheetsWriter(output_filename, "title", "artist") as writer:
+        with self.writer_class(output_filename, "title", "artist") as writer:
             self.parse_string(html.decode('utf8'), writer)
 
 

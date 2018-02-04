@@ -1,3 +1,3 @@
-[submodule "Latex/leadsheets"]
-	path = Latex/leadsheets
-	url = git@github.com:cgnieder/leadsheets.git
+[submodule "chordTex/latex/templates/leadsheets"]
+	path = chordTex/latex/templates/leadsheets
+	url = https://github.com/cgnieder/leadsheets.git
