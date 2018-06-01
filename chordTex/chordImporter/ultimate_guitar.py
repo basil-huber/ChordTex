@@ -1,11 +1,12 @@
 import urllib.request
-from sys import exit, argv
+import json
+
 
 class UltimateGuitarParser:
-    LYRICS_START_STRING = '<pre class="js-tab-content'
-    LYRICS_END_STRING = '</pre>'
-    CHORD_START_STRING = '<span>'
-    CHORD_END_STRING = '</span>'
+    LYRICS_START_STRING = '    window.UGAPP.store.page = '
+    LYRICS_END_STRING = '};'
+    CHORD_START_STRING = '[ch]'
+    CHORD_END_STRING = '[/ch]'
 
     def __init__(self, writer_class):
         self.writer_class = writer_class
@@ -20,17 +21,23 @@ class UltimateGuitarParser:
     def __call__(self, URL, output_filename):    
         try:
             response = urllib.request.urlopen(URL)
-            html = response.read()
+            for l in response:
+                if l.decode('utf-8').startswith(self.LYRICS_START_STRING):
+                    s = l.decode('utf-8')[len(self.LYRICS_START_STRING):-2]
+                    self.info = json.loads(s)
             response.close()
         except:
-            print('could not read html')
-            return ''
-        with self.writer_class(output_filename, "title", "artist") as writer:
-            self.parse_string(html.decode('utf8'), writer)
+           print('could not read html')
+           return ''
+        self.tab = self.info['data']['tab_view']['wiki_tab']['content']
+        self.song_info = self.info['data']['tab']
+        
+        with self.writer_class(output_filename, self.song_info['song_name'], self.song_info['artist_name']) as writer:
+            self.parse_string(self.tab, writer)
 
 
     def get_lyrics(self,html):
-        lyrics, i_start, i_end = self._substring_find(html, self.LYRICS_START_STRING, self.LYRICS_END_STRING, HTML_TAG = True)
+        lyrics_dict, i_start, i_end = self._substring_find(html, self.LYRICS_START_STRING, self.LYRICS_END_STRING, HTML_TAG = True)
         return lyrics
 
 
@@ -72,16 +79,15 @@ class UltimateGuitarParser:
 
             if not chord_list:
                 # if there are no chords in this line, write line
-                writer.write_line(line, chord_list_old)
+                writer.write_chordline(line, chord_list_old)
             else:
                 # if there are also chords in this line, insert chords into empty line
-                writer.write_line('', chord_list_old)
+                writer.write_chordline('', chord_list_old)
 
             line_old = line
             chord_list_old = chord_list
 
-    def parse_string(self, string, writer):
-        lyrics = self.get_lyrics(string)
+    def parse_string(self, lyrics, writer):
         string_out = self.find_chords(lyrics, writer)
         return string_out
 

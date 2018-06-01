@@ -21,7 +21,7 @@ class LeadsheetsWriter:
         self.file.write(self.POSTAMBLE_LATEX)
         self.file.close()
 
-    def write_line(self, line, chord_list):
+    def write_chordline(self, line, chord_list):
         # pad line with white spaces if line is shorter than last chord index
         if len(chord_list) > 0:
             line  = line.ljust(chord_list[-1][1])
@@ -36,3 +36,6 @@ class LeadsheetsWriter:
 
         if len(line) > 0:
             self.file.write('  \\\\\n')
+
+    def write_line(self, line):
+        self.file.write(line + '\\')
