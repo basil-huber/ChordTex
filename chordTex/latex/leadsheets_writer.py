@@ -6,10 +6,13 @@ class LeadsheetsWriter:
     HEADER_LATEX = '\\begin{document}\n\n\\begin{song}{title={%s}, interpret={%s}}\n\n'
     POSTAMBLE_LATEX = '\end{song}\n\end{document}'
 
+    SECTIONS = ['intro','chorus', 'verse','bridge','solo','outro']
+
     def __init__(self, file_name, title, interpret):
         self.file = open(file_name, 'w')
         self.file.write(self.PREAMBLE_LATEX)
         self.file.write(self.HEADER_LATEX % (title, interpret))
+        self.current_section = None
 
     def __enter__(self):
         return self
@@ -18,6 +21,8 @@ class LeadsheetsWriter:
         self.close()
 
     def close(self):
+        if self.current_section:
+            self.file.write('\\end{%s}\n' % (self.current_section))  
         self.file.write(self.POSTAMBLE_LATEX)
         self.file.close()
 
@@ -39,3 +44,12 @@ class LeadsheetsWriter:
 
     def write_line(self, line):
         self.file.write(line + '\\')
+
+    def write_section(self, section):
+        if self.current_section:
+            self.file.write('\\end{%s}\n' % (self.current_section))            
+        if section not in LeadsheetsWriter.SECTIONS:
+            return
+
+        self.file.write('\\begin{%s}\n' % (section))
+        self.current_section = section

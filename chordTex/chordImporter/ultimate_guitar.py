@@ -1,5 +1,6 @@
 import urllib.request
 import json
+import re
 
 
 class UltimateGuitarParser:
@@ -75,17 +76,35 @@ class UltimateGuitarParser:
         line_old = ''
         lyrics += '\n\n'  # add empty line at the end to make sure that last line is treated
         for line in lyrics.splitlines():
+            
             chord_list = self.find_chords_in_line(line)
-
             if not chord_list:
-                # if there are no chords in this line, write line
-                writer.write_chordline(line, chord_list_old)
+                if self.find_section(line,writer):
+                    line = ''
+                else:
+                    # if there are no chords in this line, write line
+                    writer.write_chordline(line, chord_list_old)
             else:
                 # if there are also chords in this line, insert chords into empty line
                 writer.write_chordline('', chord_list_old)
 
             line_old = line
             chord_list_old = chord_list
+
+    def find_section(self, line, writer):
+        m = re.search('\\[(\\w+)\]', line)
+        if not m:
+            return None
+        section = m.group(1)
+        print(section)
+
+        section_lc = section.lower()
+        if section_lc in self.writer_class.SECTIONS:
+            writer.write_section(section_lc)
+        else:
+            print('Unknown section %s' % (section))
+        return section
+
 
     def parse_string(self, lyrics, writer):
         string_out = self.find_chords(lyrics, writer)
