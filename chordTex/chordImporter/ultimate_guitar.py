@@ -2,10 +2,19 @@ import urllib.request
 import json
 import re
 
+def print_k(d, prefix=''):
+    if isinstance(d, dict):
+        for k in d:
+            print(prefix + '|-' + k)
+            print_k(d[k], prefix + '  ')
+
+
+
 
 class UltimateGuitarParser:
-    LYRICS_START_STRING = '    window.UGAPP.store.page = '
-    LYRICS_END_STRING = '};'
+    REGEX_SONG_JSON = re.compile(r'class="js-store" data-content="(.*)"></div>')
+    #LYRICS_START_STRING = r'class="js-store" data-content='#    window.UGAPP.store.page = '
+    #LYRICS_END_STRING = ''
     CHORD_START_STRING = '[ch]'
     CHORD_END_STRING = '[/ch]'
 
@@ -23,15 +32,20 @@ class UltimateGuitarParser:
         try:
             response = urllib.request.urlopen(URL)
             for l in response:
-                if l.decode('utf-8').startswith(self.LYRICS_START_STRING):
-                    s = l.decode('utf-8')[len(self.LYRICS_START_STRING):-2]
-                    self.info = json.loads(s)
+                match = UltimateGuitarParser.REGEX_SONG_JSON.search(l.decode('utf-8'))
+                if match:
+                    json_str = match.group(1).replace('&quot;', '"')
+                    print(json_str)
+                    self.info = json.loads(json_str)
+                    print_k(self.info)
+            else:
+                ValueError('Could not find chords in html')
             response.close()
         except:
-           print('could not read html')
-           return ''
-        self.tab = self.info['data']['tab_view']['wiki_tab']['content']
-        self.song_info = self.info['data']['tab']
+            ValueError('could not read html')
+            return ''
+        self.tab = self.info['store']['page']['data']['tab_view']['wiki_tab']['content']
+        self.song_info = self.info['store']['page']['data']['tab']
         
         with self.writer_class(output_filename, self.song_info['song_name'], self.song_info['artist_name']) as writer:
             self.parse_string(self.tab, writer)
