@@ -34,7 +34,11 @@ class LeadsheetsWriter:
         line_out = ''
         i_start_old = 0
         for chord, i_start in chord_list:
-            self.file.write('%s\chord{%s}' % (line[i_start_old:i_start], chord))
+            text = line[i_start_old:i_start]
+            # if chord follows '.' put a space (latex doesn't like .\chord{})
+            if text.endswith('.'):
+                text += ' '
+            self.file.write('%s\chord{%s}' % (text, chord))
             i_start_old = i_start
 
         self.file.write(line[i_start_old:len(line)])
