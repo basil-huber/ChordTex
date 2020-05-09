@@ -12,11 +12,12 @@ def print_k(d, prefix=''):
 
 
 class UltimateGuitarParser:
-    REGEX_SONG_JSON = re.compile(r'class="js-store" data-content="(.*)"></div>')
+    RE_SONG_JSON = re.compile(r'class="js-store" data-content="(.*)"></div>')
     #LYRICS_START_STRING = r'class="js-store" data-content='#    window.UGAPP.store.page = '
     #LYRICS_END_STRING = ''
     CHORD_START_STRING = '[ch]'
     CHORD_END_STRING = '[/ch]'
+    RE_TAB_SPLIT = re.compile(r'\[/?tab\]', re.DOTALL)
 
     def __init__(self, writer_class):
         self.writer_class = writer_class
@@ -32,7 +33,7 @@ class UltimateGuitarParser:
         try:
             response = urllib.request.urlopen(URL)
             for l in response:
-                match = UltimateGuitarParser.REGEX_SONG_JSON.search(l.decode('utf-8'))
+                match = UltimateGuitarParser.RE_SONG_JSON.search(l.decode('utf-8'))
                 if match:
                     json_str = match.group(1).replace('&quot;', '"')
                     print(json_str)
@@ -89,21 +90,22 @@ class UltimateGuitarParser:
         chord_list_old = []
         line_old = ''
         lyrics += '\n\n'  # add empty line at the end to make sure that last line is treated
-        for line in lyrics.splitlines():
-            
-            chord_list = self.find_chords_in_line(line)
-            if not chord_list:
-                if self.find_section(line,writer):
-                    line = ''
-                else:
-                    # if there are no chords in this line, write line
-                    writer.write_chordline(line, chord_list_old)
-            else:
-                # if there are also chords in this line, insert chords into empty line
-                writer.write_chordline('', chord_list_old)
+        for tab in self.RE_TAB_SPLIT.split(lyrics):
+            for line in tab.splitlines():
 
-            line_old = line
-            chord_list_old = chord_list
+                chord_list = self.find_chords_in_line(line)
+                if not chord_list:
+                    if self.find_section(line,writer):
+                        line = ''
+                    else:
+                        # if there are no chords in this line, write line
+                        writer.write_chordline(line, chord_list_old)
+                else:
+                    # if there are also chords in this line, insert chords into empty line
+                    writer.write_chordline('', chord_list_old)
+
+                line_old = line
+                chord_list_old = chord_list
 
     def find_section(self, line, writer):
         m = re.search('\\[(\\w+)\]', line)
